@@ -71,8 +71,22 @@
             object-fit: cover;
             transition: filter 0.5s;
         }
+        #homerun-apple {
+            position: absolute;
+            top: 50px; /* Adjust to appear near the hat */
+            left: 50%;
+            transform: translateX(-50%);
+            width: 50px;
+            height: 50px;
+            display: none;
+            transition: transform 1s ease-out;
+        }
+        #homerun-apple.show {
+            display: block;
+            transform: translate(-50%, -100px); /* Move upward */
+        }
         #guess-input {
-            padding禁止: padding: 10px;
+            padding: 10px;
             width: 200px;
             margin: 10px;
         }
@@ -96,13 +110,27 @@
             margin: 10px 0;
             font-weight: bold;
         }
+        #mode-toggle {
+            margin: 10px;
+            padding: 10px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        #mode-toggle:hover {
+            background-color: #0056b3;
+        }
     </style>
 </head>
 <body>
     <div id="game-container">
         <h1>Guess the Met!</h1>
+        <button id="mode-toggle" onclick="toggleHardMode()">Enable Hard Mode (No Clues)</button>
         <div id="image-container">
-            <img id="blurred-image" src="https://a.espncdn.com/combiner/i?img=/i/headshots/mlb/players/full/6035.png&w=350&h=254" alt="Guess the image">
+            <img id="blurred-image" src="https://encrypted-tbn1.gstatic.com/licensed-image?q=tbn:ANd9GcRiRIyp3ZBP5u7HC8rn-XAxE1XMublK-mag-3vnFu_MINWCBIw_BT9dVT4rwgvSNuAVNIAeL_sNVIKMPv4" alt="Guess the image">
+            <img id="homerun-apple" src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/6a/Red_Apple.svg/200px-Red_Apple.svg.png" alt="Homerun Apple">
         </div>
         <div id="clue"></div>
         <p>Guesses remaining: <span id="guesses-left">5</span></p>
@@ -114,14 +142,16 @@
     <script>
         let guessesLeft = 5;
         let currentRound = 0;
+        let hardMode = false;
         const clues = [
-            "He appeared on the 'Late Show with David Letterman' twice.",
-            "He hit .538 his senior year and was named Virginia’s Gatorade and All-State Player of the Year.",
-            "He won two Gold Gloves for elite defense and two Silver Slugger Awards for offensive prowess.",
-            "He hit the first home run at Citi Field.",
-            "He was named the fourth team captain in Mets history in 2013."
+            "He was an 11-time All-Star catcher.",
+            "He won three Gold Glove awards for his defensive skills.",
+            "He hit 324 home runs over his 19-year career.",
+            "He was a key part of the 1986 World Series champion Mets.",
+            "He was nicknamed 'The Kid' for his youthful enthusiasm."
         ];
-        const correctAnswer = "david wright"; // Case-insensitive
+        const correctAnswer = "gary carter"; // Case-insensitive for input
+        const displayAnswer = "GARY CARTER"; // Uppercase for display
         const blurLevels = [20, 16, 12, 8, 4, 0]; // in pixels
 
         // Initialize game on page load
@@ -131,13 +161,21 @@
             updateGameState();
         };
 
+        // Toggle hard mode
+        function toggleHardMode() {
+            hardMode = !hardMode;
+            document.getElementById('mode-toggle').textContent = hardMode ? "Enable Normal Mode (With Clues)" : "Enable Hard Mode (No Clues)";
+            updateGameState();
+        }
+
         // Update game state
         function updateGameState() {
             document.getElementById('guesses-left').textContent = guessesLeft;
             document.getElementById('blurred-image').style.filter = `blur(${blurLevels[currentRound]}px)`;
-            document.getElementById('clue').textContent = clues[currentRound];
+            document.getElementById('clue').textContent = hardMode ? "Hard Mode: No clues provided!" : clues[currentRound];
             document.getElementById('message').textContent = '';
             document.getElementById('guess-input').value = '';
+            document.getElementById('homerun-apple').classList.remove('show');
         }
 
         // Submit guess
@@ -156,6 +194,7 @@
             if (guess === correctAnswer) {
                 document.getElementById('blurred-image').style.filter = 'blur(0px)';
                 document.getElementById('message').textContent = 'Congratulations! You guessed correctly!';
+                document.getElementById('homerun-apple').classList.add('show');
                 document.getElementById('guess-input').disabled = true;
                 document.getElementById('submit-guess').disabled = true;
                 return;
@@ -165,7 +204,7 @@
 
             if (guessesLeft === 0) {
                 document.getElementById('blurred-image').style.filter = 'blur(0px)';
-                document.getElementById('message').textContent = `Game Over! The correct answer was ${correctAnswer}.`;
+                document.getElementById('message').textContent = `Game Over! The correct answer was ${displayAnswer}.`;
                 document.getElementById('guess-input').disabled = true;
                 document.getElementById('submit-guess').disabled = true;
                 return;
