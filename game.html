@@ -72,7 +72,7 @@
             transition: filter 0.5s;
         }
         #guess-input {
-            padding禁止: padding: 10px;
+            padding: 10px;
             width: 200px;
             margin: 10px;
         }
@@ -102,7 +102,7 @@
     <div id="game-container">
         <h1>Guess the Met!</h1>
         <div id="image-container">
-            <img id="blurred-image" src="https://a.espncdn.com/combiner/i?img=/i/headshots/mlb/players/full/6035.png&w=350&h=254" alt="Guess the image">
+            <img id="blurred-image" src="https://encrypted-tbn1.gstatic.com/licensed-image?q=tbn:ANd9GcRiRIyp3ZBP5u7HC8rn-XAxE1XMublK-mag-3vnFu_MINWCBIw_BT9dVT4rwgvSNuAVNIAeL_sNVIKMPv4" alt="Guess the image">
         </div>
         <div id="clue"></div>
         <p>Guesses remaining: <span id="guesses-left">5</span></p>
@@ -115,13 +115,13 @@
         let guessesLeft = 5;
         let currentRound = 0;
         const clues = [
-            "He appeared on the 'Late Show with David Letterman' twice.",
-            "He hit .538 his senior year and was named Virginia’s Gatorade and All-State Player of the Year.",
-            "He won two Gold Gloves for elite defense and two Silver Slugger Awards for offensive prowess.",
-            "He hit the first home run at Citi Field.",
-            "He was named the fourth team captain in Mets history in 2013."
+            "He was an 11-time All-Star catcher.",
+            "He won three Gold Glove awards for his defensive skills.",
+            "He hit 324 home runs over his 19-year career.",
+            "He was a key part of the 1986 World Series champion Mets.",
+            "He was nicknamed 'The Kid' for his youthful enthusiasm."
         ];
-        const correctAnswer = "david wright"; // Case-insensitive
+        const correctAnswer = "gary carter"; // Case-insensitive
         const blurLevels = [20, 16, 12, 8, 4, 0]; // in pixels
 
         // Initialize game on page load
