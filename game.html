@@ -1,11 +1,3 @@
-<!-- 
-    © 2025 [Samuel White]. All rights reserved.
-    Title: Guess the Met!
-    Description: A browser-based guessing game written in HTML/CSS/JS.
-    Author: [Samuel White]
--->
-
-
 <script type="text/javascript">
         var gk_isXlsx = false;
         var gk_xlsxFileLookup = {};
@@ -45,7 +37,45 @@
         }
         return gk_fileData[filename] || "";
         }
-        </script><!DOCTYPE html>
+        </script><!-- 
+    © 2025 [Samuel White]. All rights reserved.
+    Title: Guess the Met!
+    Description: A browser-based guessing game written in HTML/CSS/JS.
+    Author: [Samuel White]
+-->
+<script type="text/javascript">
+        var gk_isXlsx = false;
+        var gk_xlsxFileLookup = {};
+        var gk_fileData = {};
+        function filledCell(cell) {
+          return cell !== '' && cell != null;
+        }
+        function loadFileData(filename) {
+        if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
+            try {
+                var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
+                var firstSheetName = workbook.SheetNames[0];
+                var worksheet = workbook.Sheets[firstSheetName];
+                var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
+                var filteredData = jsonData.filter(row => row.some(filledCell));
+                var headerRowIndex = filteredData.findIndex((row, index) =>
+                  row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
+                );
+                if (headerRowIndex === -1 || headerRowIndex > 25) {
+                  headerRowIndex = 0;
+                }
+                var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex));
+                csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
+                return csv;
+            } catch (e) {
+                console.error(e);
+                return "";
+            }
+        }
+        return gk_fileData[filename] || "";
+        }
+</script>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -78,16 +108,18 @@
             height: 100%;
             object-fit: cover;
             transition: filter 0.5s;
+            filter: blur(20px); /* Initial blur */
         }
         #homerun-apple {
             position: absolute;
-            top: 50px; /* Adjust to appear near the hat */
+            top: 50px; /* Near the hat */
             left: 50%;
             transform: translateX(-50%);
             width: 50px;
             height: 50px;
             display: none;
             transition: transform 1s ease-out;
+            z-index: 2; /* Above player image */
         }
         #homerun-apple.show {
             display: block;
@@ -130,6 +162,9 @@
         #mode-toggle:hover {
             background-color: #0056b3;
         }
+        .hidden {
+            display: none; /* Hide button */
+        }
     </style>
 </head>
 <body>
@@ -138,7 +173,7 @@
         <button id="mode-toggle" onclick="toggleHardMode()">Enable Hard Mode (No Clues)</button>
         <div id="image-container">
             <img id="blurred-image" src="https://upload.wikimedia.org/wikipedia/commons/e/ea/Gary_Carter_Mets.jpg" alt="Guess the image">
-            <img id="homerun-apple" src="https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/359fd90d-7a99-429d-aa4b-c3f221d94625/dbygfr7-4f387bdc-859f-45eb-b4ed-8dca6b5ffa85.png?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7InBhdGgiOiJcL2ZcLzM1OWZkOTBkLTdhOTktNDI5ZC1hYTRiLWMzZjIyMWQ5NDYyNVwvZGJ5Z2ZyNy00ZjM4N2JkYy04NTlmLTQ1ZWItYjRlZC04ZGNhNmI1ZmZhODUucG5nIn1dXSwiYXVkIjpbInVybjpzZXJ2aWNlOmZpbGUuZG93bmxvYWQiXX0.pozfQVqv3eorGbWvw73jDqHMVcpiQIlp5AUdmjVFVF0">
+            <img id="homerun-apple" src="https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/359fd90d-7a99-429d-aa4b-c3f221d94625/dbygfr7-4f387bdc-859f-45eb-b4ed-8dca6b5ffa85.png?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7InBhdGgiOiJcL2ZcLzM1OWZkOTBkLTdhOTktNDI5ZC1hYTRiLWMzZjIyMWQ5NDYyNVwvZGJ5Z2ZyNy00ZjM4N2JkYy04NTlmLTQ1ZWItYjRlZC04ZGNhNmI1ZmZhODUucG5nIn1dXSwiYXVkIjpbInVybjpzZXJ2aWNlOmZpbGUuZG93bmxvYWQiXX0.pozfQVqv3eorGbWvw73jDqHMVcpiQIlp5AUdmjVFVF0" onerror="this.src='https://via.placeholder.com/50/ff0000/ffffff?text=Apple'" alt="Home Run Apple">
         </div>
         <div id="clue"></div>
         <p>Guesses remaining: <span id="guesses-left">5</span></p>
@@ -151,6 +186,7 @@
         let guessesLeft = 5;
         let currentRound = 0;
         let hardMode = false;
+        let firstGuessMade = false; // Track first guess
         const clues = [
             "He was an 11-time All-Star catcher",
             "He won three Gold Glove awards for his defensive skills.",
@@ -167,12 +203,18 @@
             document.getElementById('guess-input').disabled = false;
             document.getElementById('submit-guess').disabled = false;
             updateGameState();
+            // Preload Home Run Apple image
+            const appleImg = new Image();
+            appleImg.src = "https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/359fd90d-7a99-429d-aa4b-c3f221d94625/dbygfr7-4f387bdc-859f-45eb-b4ed-8dca6b5ffa85.png?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7InBhdGgiOiJcL2ZcLzM1OWZkOTBkLTdhOTktNDI5ZC1hYTRiLWMzZjIyMWQ5NDYyNVwvZGJ5Z2ZyNy00ZjM4N2JkYy04NTlmLTQ1ZWItYjRlZC04ZGNhNmI1ZmZhODUucG5nIn1dXSwiYXVkIjpbInVybjpzZXJ2aWNlOmZpbGUuZG93bmxvYWQiXX0.pozfQVqv3eorGbWvw73jDqHMVcpiQIlp5AUdmjVFVF0";
+            appleImg.onload = () => console.log("Home Run Apple image loaded successfully");
+            appleImg.onerror = () => console.error("Failed to load Home Run Apple image, using fallback");
         };
 
-        // Toggle hard mode
+        // Toggle hard mode and hide button
         function toggleHardMode() {
             hardMode = !hardMode;
-            document.getElementById('mode-toggle').textContent = hardMode ? "Enable Normal Mode (With Clues)" : "Enable Hard Mode (No Clues)";
+            document.getElementById('mode-toggle').classList.add('hidden');
+            console.log("Hard mode toggled:", hardMode, "- Mode button hidden");
             updateGameState();
         }
 
@@ -184,6 +226,7 @@
             document.getElementById('message').textContent = '';
             document.getElementById('guess-input').value = '';
             document.getElementById('homerun-apple').classList.remove('show');
+            console.log("Game state updated, blur set to", blurLevels[currentRound], "px");
         }
 
         // Submit guess
@@ -196,6 +239,12 @@
                 return;
             }
 
+            if (!firstGuessMade) {
+                firstGuessMade = true;
+                document.getElementById('mode-toggle').classList.add('hidden');
+                console.log("First guess made - Mode button hidden");
+            }
+
             guessesLeft--;
             currentRound++;
 
@@ -205,6 +254,7 @@
                 document.getElementById('homerun-apple').classList.add('show');
                 document.getElementById('guess-input').disabled = true;
                 document.getElementById('submit-guess').disabled = true;
+                console.log("Correct guess! Showing Home Run Apple");
                 return;
             } else {
                 document.getElementById('message').textContent = 'Incorrect guess. Try again!';
@@ -215,6 +265,7 @@
                 document.getElementById('message').textContent = `Game Over! The correct answer was ${displayAnswer}.`;
                 document.getElementById('guess-input').disabled = true;
                 document.getElementById('submit-guess').disabled = true;
+                console.log("Game over");
                 return;
             }
 
