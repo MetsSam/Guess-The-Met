@@ -117,18 +117,18 @@
         }
         #homerun-apple {
             position: absolute;
-            top: 100px; /* Start slightly below hat, behind image */
+            top: -25px; /* Start below hat, behind image */
             left: 50%;
-            transform: translateX(-50%);
-            width: 50px;
-            height: 50px;
-            display: none;
-            transition: transform 4s ease-out; /* Very slow animation */
+            transform: translateX(-25%);
+            width: 100px;
+            height: 100px;
+            opacity: 0; /* Initially hidden */
+            transition: transform 3s ease-out, opacity 3s ease-out; /* Very slow animation */
             z-index: 2; /* Above player image */
         }
         #homerun-apple.show {
-            display: block;
-            transform: translate(-50%, -150px); /* Slide upward */
+            opacity: 1; /* Fade in */
+            transform: translate(-50%, -50px); /* Slide upward */
         }
         #guess-input {
             padding: 10px;
@@ -266,7 +266,7 @@
                 document.getElementById('homerun-apple').classList.add('show');
                 document.getElementById('guess-input').disabled = true;
                 document.getElementById('submit-guess').disabled = true;
-                console.log("Correct guess! Showing Home Run Apple and hiding title");
+                console.log("Correct guess! Applying 'show' class to Home Run Apple");
                 return;
             } else {
                 document.getElementById('message').textContent = 'Incorrect guess. Try again!';
