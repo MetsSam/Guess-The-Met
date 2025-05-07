@@ -72,7 +72,7 @@
             transition: filter 0.5s;
         }
         #guess-input {
-            padding: 10px;
+            padding禁止: padding: 10px;
             width: 200px;
             margin: 10px;
         }
@@ -96,30 +96,13 @@
             margin: 10px 0;
             font-weight: bold;
         }
-        #upload-section {
-            margin: 20px 0;
-        }
     </style>
 </head>
 <body>
     <div id="game-container">
         <h1>Guess the Met!</h1>
-        <div id="upload-section">
-            <label for="image-upload">Upload Image:</label>
-            <input type="file" id="image-upload" accept="image/*">
-            <div id="clue-inputs">
-                <h3>Enter Clues for Each Round:</h3>
-                <input type="text" id="clue1" placeholder="Clue for Round 1">
-                <input type="text" id="clue2" placeholder="Clue for Round 2">
-                <input type="text" id="clue3" placeholder="Clue for Round 3">
-                <input type="text" id="clue4" placeholder="Clue for Round 4">
-                <input type="text" id="clue5" placeholder="Clue for Round 5">
-                <input type="text" id="correct-answer" placeholder="Correct Answer">
-                <button onclick="startGame()">Start Game</button>
-            </div>
-        </div>
-        <div id="image-container" style="display: none;">
-            <img id="blurred-image" src="" alt="Guess the image">
+        <div id="image-container">
+            <img id="blurred-image" src="https://a.espncdn.com/combiner/i?img=/i/headshots/mlb/players/full/6035.png&w=350&h=254" alt="Guess the image">
         </div>
         <div id="clue"></div>
         <p>Guesses remaining: <span id="guesses-left">5</span></p>
@@ -131,53 +114,22 @@
     <script>
         let guessesLeft = 5;
         let currentRound = 0;
-        let clues = [];
-        let correctAnswer = '';
-        let imageLoaded = false;
-
-        // Blur levels for each round (from very blurry to clear)
+        const clues = [
+            "He appeared on the 'Late Show with David Letterman' twice.",
+            "He hit .538 his senior year and was named Virginia’s Gatorade and All-State Player of the Year.",
+            "He won two Gold Gloves for elite defense and two Silver Slugger Awards for offensive prowess.",
+            "He hit the first home run at Citi Field.",
+            "He was named the fourth team captain in Mets history in 2013."
+        ];
+        const correctAnswer = "david wright"; // Case-insensitive
         const blurLevels = [20, 16, 12, 8, 4, 0]; // in pixels
 
-        // Handle image upload
-        document.getElementById('image-upload').addEventListener('change', function(e) {
-            const file = e.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function(event) {
-                    document.getElementById('blurred-image').src = event.target.result;
-                    imageLoaded = true;
-                };
-                reader.readAsDataURL(file);
-            }
-        });
-
-        // Start the game
-        function startGame() {
-            if (!imageLoaded) {
-                alert('Please upload an image first!');
-                return;
-            }
-            clues = [
-                document.getElementById('clue1').value,
-                document.getElementById('clue2').value,
-                document.getElementById('clue3').value,
-                document.getElementById('clue4').value,
-                document.getElementById('clue5').value
-            ];
-            correctAnswer = document.getElementById('correct-answer').value.toLowerCase();
-            if (!correctAnswer || clues.some(clue => !clue)) {
-                alert('Please fill in all clues and the correct answer!');
-                return;
-            }
-            document.getElementById('upload-section').style.display = 'none';
-            document.getElementById('image-container').style.display = 'block';
-            guessesLeft = 5;
-            currentRound = 0;
-            // Enable input and button
+        // Initialize game on page load
+        window.onload = function() {
             document.getElementById('guess-input').disabled = false;
             document.getElementById('submit-guess').disabled = false;
             updateGameState();
-        }
+        };
 
         // Update game state
         function updateGameState() {
